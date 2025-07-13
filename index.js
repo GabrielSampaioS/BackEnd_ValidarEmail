@@ -1,10 +1,12 @@
 // =======================
 // Importação de módulos
 // =======================
-const express = require('express');
-const path = require('path');
-const mongoose = require('mongoose');
-require('dotenv').config();
+import express from 'express'
+//import path from 'path'
+import mongoose from 'mongoose'
+import dotenv from 'dotenv'
+
+dotenv.config();
 
 // =======================
 // Inicialização do app
@@ -14,12 +16,14 @@ const app = express();
 // =======================
 // Middlewares para receber dados do body
 // =======================
-//app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 
 // =======================
 // Conexão com o banco de dados
 // =======================
-const uri = process.env.MONGO_URI || 'mongodb://localhost:27017/EncurtandoURL';
+const uri = process.env.MONGO_URI
 
 mongoose.connect(uri, {
     useNewUrlParser: true,
@@ -27,7 +31,7 @@ mongoose.connect(uri, {
 }).then(() => {
     console.log('Conectado ao MongoDB com sucesso!');
     
-    const PORT = process.env.PORT || 3000;
+    const PORT = process.env.PORT
     app.listen(PORT, () => {
         console.log(`Servidor rodando na porta ${PORT}`);
         console.log(`Conectado ao MongoDB: ${uri}`);
@@ -39,4 +43,7 @@ mongoose.connect(uri, {
 // =======================
 // Importação dos Controllers e Rotas 
 // =======================
-// app.use('/suaRota', require('./routes/suaRota'));
+import router from './Routes/emailRoutes.js'
+
+app.use('/api', router);
+
