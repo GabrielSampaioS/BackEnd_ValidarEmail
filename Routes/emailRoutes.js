@@ -12,7 +12,7 @@ router.post('/register', EmailController.registerEmail);
 router.post('/send-pin', EmailController.sendPin);
 
 // Validar PIN recebido por e-mail
-//router.post('/validate-pin', EmailController.validatePin);
+router.post('/validate-pin', EmailController.validatePin);
 
 //Listar todos os e-mails (ex: para interface administrativa)
 router.get('/emails', EmailController.getAllEmails);

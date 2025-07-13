@@ -1,6 +1,6 @@
 import EmailSchema from '../Model/Email.js'
 import { generateAndStorePin, validatePin } from '../services/pinService.js'
-//import { sendPinEmail } from'../services/emailService.js'
+import EmailService from '../services/emailService.js';
 
 class EmailController{
 
@@ -29,7 +29,7 @@ class EmailController{
         }
     }
 
-    //OK ?Gerar pin e encaminar via e-mail
+    //OK Gerar pin e encaminar via e-mail
     static async sendPin(req, res){
         
         const {email} = req.body;
@@ -37,7 +37,7 @@ class EmailController{
         try{
             
             const pin = await generateAndStorePin(email)
-            //await sendPinEmail(email, pin)
+            EmailService.sendPinEmail(email, pin) //email, pin
             
             return res.status(200).json({messagem:'PIN enviado com sucesso'})
             
@@ -48,12 +48,27 @@ class EmailController{
    
     };
 
-    //NÂO Verificar se PIN informado é o qual foi encaminhando e esta no redis
-    //static async validatePin();
+    //Verificar se PIN informado é o qual foi encaminhando e esta no redis
+    static async validatePin(req, res){
+        const {email, pin} = req.body
+
+        const isValid = await validatePin(email, pin)
+
+        if(isValid){
+            await EmailSchema.findOneAndUpdate(
+                {email},
+                {validado: true}
+            )
+            return res.status(200).json({ message: "Email validado com sucesso." });
+        }else{
+            res.status(401).json({message:"Email NÂO validado"})
+        }
+
+
+    };
     
     //OK Trazer todos os e-mails 
     static async getAllEmails(req, res){
-        console.log('teste')
         
         try{
             const retorno = await EmailSchema.find()
